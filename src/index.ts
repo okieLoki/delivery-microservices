@@ -1,11 +1,12 @@
 import express, {Express} from 'express';
+import {adminRoute, vendorRoute} from './routes/index'
 
-const app = express();
+const app: Express = express();
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+app.use('/admin', adminRoute);
+app.use('/vendor', vendorRoute);
+
 
 app.listen(8080, () => {
-  console.log('Server listening on port 3000');
+  console.log('Server listening on port 8080');
 });
