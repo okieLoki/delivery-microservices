@@ -5,8 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dbConnect = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-main().catch(err => console.log(err));
-async function main() {
-    await mongoose_1.default.connect('mongodb://127.0.0.1:27017/delivery-app');
-}
-exports.dbConnect = main;
+const dbConnect = async () => {
+    mongoose_1.default.connect('mongodb://localhost:27017/food-delivery')
+        .then(() => {
+        console.log('Database connected');
+    }).catch((err) => {
+        console.error(err);
+    });
+};
+exports.dbConnect = dbConnect;

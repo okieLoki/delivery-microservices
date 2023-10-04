@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const index_1 = require("./routes/index");
 const index_2 = require("./config/index");
+const index_3 = require("./middleware/index");
 const app = (0, express_1.default)();
-(0, index_2.dbConnect)().catch((err) => {
-    console.error(err);
-});
+(0, index_2.dbConnect)();
 app.use(express_1.default.json());
+app.use(index_3.errorHandler);
 app.use('/admin', index_1.adminRoute);
 app.use('/vendor', index_1.vendorRoute);
 app.listen(8080, () => {

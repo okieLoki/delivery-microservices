@@ -39,6 +39,17 @@ const vendorSchema = new mongoose_1.Schema({
     coverImage: [{ type: String }],
     rating: { type: Number },
     foods: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Food' }]
-}, { timestamps: true });
+}, {
+    toJSON: {
+        transform: (doc, ret, options) => {
+            delete ret.password;
+            delete ret.salt;
+            delete ret.__v;
+            delete ret.createdAt;
+            delete ret.updatedAt;
+        }
+    },
+    timestamps: true
+});
 const Vendor = mongoose_1.default.model('Vendor', vendorSchema);
 exports.Vendor = Vendor;

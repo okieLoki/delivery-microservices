@@ -30,7 +30,20 @@ const vendorSchema = new Schema<IVendorDoc>({
     coverImage: [{ type: String }],
     rating: { type: Number },
     foods: [{ type: Schema.Types.ObjectId, ref: 'Food' }]
-}, { timestamps: true });
+},
+    {
+        toJSON: {
+            transform: (doc, ret, options) => {
+                delete ret.password;
+                delete ret.salt;
+                delete ret.__v;
+                delete ret.createdAt;
+                delete ret.updatedAt;
+            }
+        },
+        timestamps: true
+    }
+);
 
 const Vendor: Model<IVendorDoc> = mongoose.model<IVendorDoc>('Vendor', vendorSchema);
 
