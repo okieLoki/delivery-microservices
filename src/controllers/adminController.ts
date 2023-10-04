@@ -1,14 +1,23 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import {createVendorInput} from '../interface/index'
+import {Vendor} from '../models/index'
 
-const createVendor = (req: Request, res: Response) => {
+const createVendor = async (req: Request, res: Response, next: NextFunction) => {
+    
+    const vendor : createVendorInput = req.body;
+
+    const createdVendor = await Vendor.create(vendor)
+
+    return res.status(200).json({
+        vendor: vendor.pincode
+    })
+}
+
+const getVendors = (req: Request, res: Response, next: NextFunction) => {
 
 }
 
-const getVendors = (req: Request, res: Response) => {
-
-}
-
-const getVendorById = (req: Request, res: Response) => {
+const getVendorById = (req: Request, res: Response, next: NextFunction) => {
 
 }
 
