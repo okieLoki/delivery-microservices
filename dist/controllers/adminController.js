@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getVendorById = exports.getVendors = exports.createVendor = void 0;
 const http_errors_1 = __importDefault(require("http-errors"));
+const handleErrors_1 = require("../middleware/handleErrors");
 const index_1 = require("../models/index");
 const index_2 = require("../utils/index");
 const createVendor = async (req, res, next) => {
@@ -29,16 +30,40 @@ const createVendor = async (req, res, next) => {
         });
     }
     catch (error) {
-        return res.status(error.statusCode).json({
-            status: 'Error',
-            message: error.message
-        });
+        return (0, handleErrors_1.handleErrors)(error, res);
     }
 };
 exports.createVendor = createVendor;
-const getVendors = (req, res, next) => {
+const getVendors = async (req, res) => {
+    try {
+        const vendors = await index_1.Vendor.find();
+        if (!vendors) {
+            throw http_errors_1.default.NotFound('No vendors found');
+        }
+        return res.status(200).json({
+            success: true,
+            data: vendors
+        });
+    }
+    catch (error) {
+        return (0, handleErrors_1.handleErrors)(error, res);
+    }
 };
 exports.getVendors = getVendors;
-const getVendorById = (req, res, next) => {
+const getVendorById = async (req, res) => {
+    const id = req.query.id;
+    try {
+        const vendorData = await index_1.Vendor.findById(id);
+        if (!vendorData) {
+            throw http_errors_1.default.NotFound('No vendor found');
+        }
+        return res.status(200).json({
+            success: true,
+            data: vendorData
+        });
+    }
+    catch (error) {
+        return (0, handleErrors_1.handleErrors)(error, res);
+    }
 };
 exports.getVendorById = getVendorById;

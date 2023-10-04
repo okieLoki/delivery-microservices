@@ -33,7 +33,7 @@ const vendorSchema = new Schema<IVendorDoc>({
 },
     {
         toJSON: {
-            transform: (doc, ret, options) => {
+            transform: (_, ret) => {
                 delete ret.password;
                 delete ret.salt;
                 delete ret.__v;

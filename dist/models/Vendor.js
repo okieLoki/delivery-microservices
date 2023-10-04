@@ -41,7 +41,7 @@ const vendorSchema = new mongoose_1.Schema({
     foods: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Food' }]
 }, {
     toJSON: {
-        transform: (doc, ret, options) => {
+        transform: (_, ret) => {
             delete ret.password;
             delete ret.salt;
             delete ret.__v;
