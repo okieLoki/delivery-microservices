@@ -1,10 +1,10 @@
-import { Request as VendorRequest, Response as VendorResponse } from 'express'
+import { Request, Response } from 'express'
 import { vendorLoginInputs as VendorLoginInputs } from '../interface/index'
 import { findVendor } from './index'
 import { validatePassword, handleErrors, generateToken } from '../utils/index'
 import createError from 'http-errors'
 
-const vendorLogin = async (req: VendorRequest, res: VendorResponse) => {
+const vendorLogin = async (req: Request, res: Response) => {
     const vendor: VendorLoginInputs = req.body
 
     try {
@@ -20,7 +20,7 @@ const vendorLogin = async (req: VendorRequest, res: VendorResponse) => {
             existingVendor.password
         )
 
-        if(isValidPassword){
+        if (isValidPassword) {
             const token = generateToken({
                 _id: existingVendor._id,
                 email: existingVendor.email,
@@ -35,18 +35,33 @@ const vendorLogin = async (req: VendorRequest, res: VendorResponse) => {
                 }
             })
         }
-        else{
+        else {
             throw createError(401, 'Invalid credentials')
         }
-
-
 
     } catch (error) {
         return handleErrors(error, res)
     }
 }
 
-const getVendorProfile = async () => {
+const getVendorProfile = async (req: Request, res: Response) => {
+
+    const user = req.user
+
+    try {
+        if (user) {
+            const vendor = await findVendor(user._id)
+            return res.status(200).json({
+                success: true,
+                data: vendor
+            })
+        }
+        else {
+            throw createError(401, 'Unauthorized')
+        }
+    } catch (error) {
+        return handleErrors(error, res)
+    }
 
 }
 
@@ -58,5 +73,10 @@ const updateVendorService = async () => {
 
 }
 
-export { vendorLogin }
+export {
+    vendorLogin,
+    getVendorProfile,
+    updateVendorProfile,
+    updateVendorService
+}
 

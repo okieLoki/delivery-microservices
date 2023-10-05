@@ -27,7 +27,7 @@ const generateToken = (payload: vendorPayload) => {
 
 const validateToken = async (req: Request) => {
 
-    const token = req.get('Authorization')
+    const token = req.header('Authorization')
 
     if(token){
         const payload = jwt.verify(
