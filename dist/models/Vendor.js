@@ -28,7 +28,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const vendorSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     ownerName: { type: String, required: true },
-    foodType: [{ type: String }],
+    foodType: { type: [String] },
     pincode: { type: String, required: true },
     address: { type: String },
     phone: { type: String, minlength: 10, maxlength: 10, required: true },
@@ -36,7 +36,7 @@ const vendorSchema = new mongoose_1.Schema({
     password: { type: String, required: true },
     salt: { type: String, required: true },
     serviceAvailable: { type: Boolean },
-    coverImage: [{ type: String }],
+    coverImage: { type: [String] },
     rating: { type: Number },
     foods: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Food' }]
 }, {

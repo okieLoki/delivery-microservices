@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 
 const dbConnect = async () => {
-  mongoose.connect('mongodb://localhost:27017/food-delivery')
+
+  mongoose.connect(process.env.MONGO_URI as string)
     .then(() => {
       console.log('Database connected');
     }

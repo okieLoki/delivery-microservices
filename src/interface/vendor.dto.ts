@@ -1,4 +1,4 @@
-interface createVendorInput {
+export interface createVendorInput {
     name: string;
     ownerName: string;
     foodType: [string];
@@ -9,4 +9,15 @@ interface createVendorInput {
     password: string;
 }
 
-export { createVendorInput }
+export interface vendorLoginInputs{
+    email: string;
+    password: string
+}
+
+export interface vendorPayload{
+    _id: string;
+    email: string;
+    name: string;
+    foodType: [string];
+}
+

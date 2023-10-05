@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 interface IVendorDoc extends Document {
     name: string;
     ownerName: string;
-    foodType: string[];
+    foodType: [string];
     pincode: string;
     address?: string;
     phone: string;
@@ -11,7 +11,7 @@ interface IVendorDoc extends Document {
     password: string;
     salt: string;
     serviceAvailable?: boolean;
-    coverImage?: string[];
+    coverImage?: [string];
     rating?: number;
     foods?: any[];
 }
@@ -19,7 +19,7 @@ interface IVendorDoc extends Document {
 const vendorSchema = new Schema<IVendorDoc>({
     name: { type: String, required: true },
     ownerName: { type: String, required: true },
-    foodType: [{ type: String }],
+    foodType: { type: [String]},
     pincode: { type: String, required: true },
     address: { type: String },
     phone: { type: String, minlength: 10, maxlength: 10, required: true },
@@ -27,7 +27,7 @@ const vendorSchema = new Schema<IVendorDoc>({
     password: { type: String, required: true },
     salt: { type: String, required: true },
     serviceAvailable: { type: Boolean },
-    coverImage: [{ type: String }],
+    coverImage: {type: [String]},
     rating: { type: Number },
     foods: [{ type: Schema.Types.ObjectId, ref: 'Food' }]
 },
