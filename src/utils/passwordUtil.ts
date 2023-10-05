@@ -1,5 +1,6 @@
+import { Request } from 'express'
 import bcrypt from 'bcryptjs'
-import { vendorPayload } from '../interface/index'
+import { vendorPayload, authPayload } from '../interface/index'
 import jwt from 'jsonwebtoken'
 
 const generateSalt = async () => {
@@ -22,7 +23,22 @@ const generateToken = (payload: vendorPayload) => {
             expiresIn: '1d'
         }
     )
+}
 
+const validateToken = async (req: Request) => {
+
+    const token = req.get('Authorization')
+
+    if(token){
+        const payload = jwt.verify(
+            token.split(' ')[1],
+            process.env.JWT_SECRET as string
+        ) as authPayload
+
+        req.user = payload
+        return true
+    }
+    return false
 }
 
 export {
