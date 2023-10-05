@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
-import { vendorLoginInputs as VendorLoginInputs } from '../interface/index'
+import { vendorLoginInputs, vendorEditInputs } from '../interface/index'
 import { findVendor } from './index'
 import { validatePassword, handleErrors, generateToken } from '../utils/index'
 import createError from 'http-errors'
 
 const vendorLogin = async (req: Request, res: Response) => {
-    const vendor: VendorLoginInputs = req.body
+    const vendor: vendorLoginInputs = req.body
 
     try {
         const existingVendor = await findVendor(undefined, vendor.email)
@@ -48,8 +48,6 @@ const getVendorProfile = async (req: Request, res: Response) => {
 
     const user = req.user
 
-    console.log(req.user)
-
     try {
         if (user) {
             const vendor = await findVendor(user._id)
@@ -68,9 +66,35 @@ const getVendorProfile = async (req: Request, res: Response) => {
 
 }
 
-const updateVendorProfile = async () => {
+const updateVendorProfile = async (req: Request, res: Response) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            throw createError.Forbidden('Unauthorized')
+        }
 
-}
+        const dataToChange = req.body;
+
+        const vendor = await findVendor(user._id);
+
+        vendor.name = dataToChange.name || vendor.name;
+        vendor.address = dataToChange.address || vendor.address;
+        vendor.phone = dataToChange.phone || vendor.phone;
+        vendor.foodType = dataToChange.foodType || vendor.foodType;
+
+        const savedResult = await vendor.save();
+
+        return res.status(200).json({
+            status: true,
+            message: "Vendor profile updated successfully",
+            data: savedResult,
+        });
+
+    } catch (error) {
+        handleErrors(error, res)
+    }
+};
+
 
 const updateVendorService = async () => {
 
