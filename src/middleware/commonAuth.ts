@@ -17,10 +17,10 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
         next()
     }
 
-    res.status(401).json({
-        success: false,
-        message: 'Unauthorized'
-    })
+    // res.status(401).json({
+    //     success: false,
+    //     message: 'Unauthorized'
+    // })
 
 }
 

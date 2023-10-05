@@ -48,9 +48,12 @@ const getVendorProfile = async (req: Request, res: Response) => {
 
     const user = req.user
 
+    console.log(req.user)
+
     try {
         if (user) {
             const vendor = await findVendor(user._id)
+            
             return res.status(200).json({
                 success: true,
                 data: vendor

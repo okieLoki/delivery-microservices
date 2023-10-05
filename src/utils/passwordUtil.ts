@@ -27,18 +27,22 @@ const generateToken = (payload: vendorPayload) => {
 
 const validateToken = async (req: Request) => {
 
-    const token = req.header('Authorization')
+    const token = req.headers.authorization?.split(' ')[1]
 
-    if(token){
-        const payload = jwt.verify(
-            token.split(' ')[1],
-            process.env.JWT_SECRET as string
-        ) as authPayload
-
-        req.user = payload
-        return true
+    if (!token) {
+        return false
     }
-    return false
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as authPayload
+        req.user = decoded
+        return true
+
+    } catch (error) {
+
+        return false
+
+    }
 }
 
 export {
