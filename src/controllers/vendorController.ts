@@ -60,7 +60,7 @@ const getVendorProfile = async (req: Request, res: Response) => {
             throw createError(401, 'Unauthorized')
         }
     } catch (error) {
-        return handleErrors(error, res)
+        return handleErrors(error, res) 
     }
 
 }
