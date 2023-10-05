@@ -45,5 +45,6 @@ export {
     generatePassword,
     generateSalt,
     validatePassword,
-    generateToken
+    generateToken,
+    validateToken
 }
