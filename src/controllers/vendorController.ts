@@ -46,24 +46,21 @@ const vendorLogin = async (req: Request, res: Response) => {
 
 const getVendorProfile = async (req: Request, res: Response) => {
 
-    const user = req.user
-
     try {
-        if (user) {
-            const vendor = await findVendor(user._id)
-            
-            return res.status(200).json({
-                success: true,
-                data: vendor
-            })
+        const user = req.user
+        if (!user) {
+            throw createError.Forbidden('Unauthorized')
         }
-        else {
-            throw createError(401, 'Unauthorized')
-        }
-    } catch (error) {
-        return handleErrors(error, res) 
-    }
+        const vendor = await findVendor(user._id)
 
+        return res.status(200).json({
+            success: true,
+            data: vendor
+        })
+
+    } catch (error) {
+        return handleErrors(error, res)
+    }
 }
 
 const updateVendorProfile = async (req: Request, res: Response) => {
@@ -73,7 +70,7 @@ const updateVendorProfile = async (req: Request, res: Response) => {
             throw createError.Forbidden('Unauthorized')
         }
 
-        const dataToChange = req.body;
+        const dataToChange: vendorEditInputs = req.body;
 
         const vendor = await findVendor(user._id);
 
@@ -96,7 +93,36 @@ const updateVendorProfile = async (req: Request, res: Response) => {
 };
 
 
-const updateVendorService = async () => {
+const updateVendorService = async (req: Request, res: Response) => {
+
+    try {
+        const user = req.user;
+
+        if (!user) {
+            throw createError.Forbidden('Unauthorized')
+        }
+
+        const serviceAvailable: boolean = req.body.serviceAvailable;
+
+        if (!serviceAvailable) {
+            throw createError.BadRequest('Service availability not provided')
+        }
+
+        const vendor = await findVendor(user._id);
+
+        vendor.serviceAvailable = serviceAvailable;
+
+        const savedResult = await vendor.save();
+
+        return res.status(200).json({
+            status: true,
+            message: "Vendor service updated successfully",
+            data: savedResult,
+        });
+
+    } catch (error) {
+        handleErrors(error, res)
+    }
 
 }
 

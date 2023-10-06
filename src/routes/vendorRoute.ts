@@ -10,8 +10,10 @@ import { authenticate } from '../middleware/index'
 const router: Router = express.Router();
 
 router.post('/login', vendorLogin)
-router.get('/profile', authenticate, getVendorProfile)
-router.patch('/profile', authenticate, updateVendorProfile)
-router.patch('/service', authenticate, updateVendorService)
+
+router.use(authenticate)
+router.get('/profile', getVendorProfile)
+router.patch('/profile', updateVendorProfile)
+router.patch('/service', updateVendorService)
 
 export { router as vendorRoute }

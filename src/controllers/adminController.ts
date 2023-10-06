@@ -5,22 +5,15 @@ import { Vendor } from '../models/index';
 import { generatePassword, generateSalt, handleErrors } from '../utils/index';
 
 const findVendor = async (id: string | undefined, email?: string) => {
-  try {
-    const vendor = await Vendor.findOne({
-      $or: [
-        { _id: id },
-        { email: email },
-      ],
-    });
 
-    if (!vendor) {
-      throw createError(404, 'No vendor found');
-    }
+  const vendor = await Vendor.findOne({
+    $or: [
+      { _id: id },
+      { email: email },
+    ],
+  });
 
-    return vendor;
-  } catch (error) {
-    throw error;
-  }
+  return vendor || null
 };
 
 const createVendor = async (req: Request, res: Response) => {
