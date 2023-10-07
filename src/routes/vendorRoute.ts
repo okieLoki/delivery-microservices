@@ -3,7 +3,9 @@ import {
     getVendorProfile,
     updateVendorProfile,
     updateVendorService,
-    vendorLogin
+    vendorLogin,
+    getFoods,
+    addFood
 } from '../controllers';
 import { authenticate } from '../middleware/index'
 
@@ -15,5 +17,8 @@ router.use(authenticate)
 router.get('/profile', getVendorProfile)
 router.patch('/profile', updateVendorProfile)
 router.patch('/service', updateVendorService)
+
+router.post('/food', addFood)
+router.get('/foods', getFoods)
 
 export { router as vendorRoute }

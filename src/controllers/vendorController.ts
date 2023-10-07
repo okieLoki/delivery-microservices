@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
-import { vendorLoginInputs, vendorEditInputs } from '../interface/index'
+import { vendorLoginInputs, vendorEditInputs, createFoodInput } from '../interface/index'
 import { findVendor } from './index'
 import { validatePassword, handleErrors, generateToken } from '../utils/index'
+import { Food } from '../models/index'
 import createError from 'http-errors'
 
 const vendorLogin = async (req: Request, res: Response) => {
@@ -123,13 +124,64 @@ const updateVendorService = async (req: Request, res: Response) => {
     } catch (error) {
         handleErrors(error, res)
     }
+}
 
+const addFood = async (req: Request, res: Response) => {
+    try {
+        const user = req.user;
+        const food: createFoodInput = req.body;
+
+        if (!user) {
+            throw createError.Forbidden('Unauthorized')
+        }
+
+        const vendor = await findVendor(user._id);
+
+        const newFood = await Food.create({
+            ...food,
+            vendorId: vendor._id
+        })
+
+        return res.status(200).json({
+            status: true,
+            message: "Food added successfully",
+            data: newFood,
+        });
+
+    } catch (error) {
+        handleErrors(error, res)
+    }
+}
+
+const getFoods = async (req: Request, res: Response) => {
+    try {
+        const user = req.user;
+
+        if (!user) {
+            throw createError.Forbidden('Unauthorized')
+        }
+
+        const vendor = await findVendor(user._id);
+
+        const foods = await Food.find({ vendorId: vendor._id })
+
+        return res.status(200).json({
+            status: true,
+            message: "Foods fetched successfully",
+            data: foods,
+        });
+
+    } catch (error) {
+        handleErrors(error, res)
+    }
 }
 
 export {
     vendorLogin,
     getVendorProfile,
     updateVendorProfile,
-    updateVendorService
+    updateVendorService,
+    addFood,
+    getFoods
 }
 
