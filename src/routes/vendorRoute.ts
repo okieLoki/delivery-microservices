@@ -3,6 +3,7 @@ import {
     getVendorProfile,
     updateVendorProfile,
     updateVendorService,
+    updateVendorCoverImage,
     vendorLogin,
     getFoods,
     addFood
@@ -29,6 +30,7 @@ router.post('/login', vendorLogin)
 router.use(authenticate)
 router.get('/profile', getVendorProfile)
 router.patch('/profile', updateVendorProfile)
+router.patch('/profile/cover', images, updateVendorCoverImage)
 router.patch('/service', updateVendorService)
 
 router.post('/food', images, addFood)
