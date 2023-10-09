@@ -41,4 +41,4 @@ const foodSchema = new Schema<IFoodDoc>({
 
 const Food: Model<IFoodDoc> = mongoose.model<IFoodDoc>('Food', foodSchema);
 
-export { Food }
+export { Food, IFoodDoc }

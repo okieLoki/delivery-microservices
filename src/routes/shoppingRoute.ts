@@ -11,7 +11,7 @@ const router : Router = express.Router();
 
 router.get('/', getFoodAvailability);
 router.get('/top-resturants', getTopResturants);
-router.get('/food-in-30-mins/:pincode', getFoodin30Mins);
+router.get('/food-in-30-mins', getFoodin30Mins);
 router.get('/search/:pincode', searchFoods);
 router.get('/resturant/:id', resturantById);
 

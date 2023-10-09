@@ -171,7 +171,7 @@ const addFood = async (req: Request, res: Response) => {
 
         const files = req.files as [Express.Multer.File]
 
-        const images = files.map((file: Express.Multer.File) => {
+        const images = files?.map((file: Express.Multer.File) => {
             return file.filename
         })
 
