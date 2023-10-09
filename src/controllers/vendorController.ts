@@ -137,15 +137,29 @@ const addFood = async (req: Request, res: Response) => {
 
         const vendor = await findVendor(user._id);
 
-        const newFood = await Food.create({
-            ...food,
-            vendorId: vendor._id
+        if (!vendor) {
+            throw createError.NotFound('Vendor not found')
+        }
+
+        const files = req.files as [Express.Multer.File]
+
+        const images = files.map((file: Express.Multer.File) => {
+            return file.filename
         })
+
+        const createdFood = await Food.create({
+            ...food,
+            vendorId: vendor._id,
+            images: images
+        })
+
+        vendor.foods.push(createdFood)
+        await vendor.save()
 
         return res.status(200).json({
             status: true,
             message: "Food added successfully",
-            data: newFood,
+            data: createdFood,
         });
 
     } catch (error) {
@@ -162,6 +176,10 @@ const getFoods = async (req: Request, res: Response) => {
         }
 
         const vendor = await findVendor(user._id);
+
+        if (!vendor) {
+            throw createError.NotFound('Vendor not found')
+        }
 
         const foods = await Food.find({ vendorId: vendor._id })
 
