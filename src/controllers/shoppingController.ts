@@ -9,7 +9,7 @@ const getFoodAvailability = async (req: Request, res: Response) => {
     try {
         if (!pincode) throw new createError.BadRequest('Pincode is required')
 
-        const result = await Vendor.find({ pincode: pincode })
+        const result = await Vendor.find({ pincode: pincode, serviceAvailable: true }).populate('foods')
 
         if (result.length === 0) throw new createError.NotFound('No food available')
 
@@ -24,6 +24,26 @@ const getFoodAvailability = async (req: Request, res: Response) => {
 
 
 const getTopResturants = async (req: Request, res: Response) => {
+    const pincode = req.query.pincode
+
+    try {
+        if (!pincode) throw new createError.BadRequest('Pincode is required')
+
+        const result = await Vendor.find({ pincode: pincode, serviceAvailable: true })
+            .sort([['rating', 'descending']])
+            .limit(10)
+
+
+        if (result.length === 0) throw new createError.NotFound('No resturant found')
+
+        return res.status(200).json({
+            success: true,
+            data: result
+        })
+
+    } catch (error) {
+        return handleErrors(error, res)
+    }
 
 }
 
