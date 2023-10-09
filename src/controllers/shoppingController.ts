@@ -1,8 +1,27 @@
-import express, { Request, Response } from 'express'
+import { Request, Response } from 'express'
+import { handleErrors } from '../utils/index'
+import createError from 'http-errors'
+import { Vendor } from '../models'
 
 const getFoodAvailability = async (req: Request, res: Response) => {
+    const pincode = req.query.pincode
 
+    try {
+        if (!pincode) throw new createError.BadRequest('Pincode is required')
+
+        const result = await Vendor.find({ pincode: pincode })
+
+        if (result.length === 0) throw new createError.NotFound('No food available')
+
+        return res.status(200).json({
+            success: true,
+            data: result
+        })
+    } catch (error) {
+        return handleErrors(error, res)
+    }
 }
+
 
 const getTopResturants = async (req: Request, res: Response) => {
 
