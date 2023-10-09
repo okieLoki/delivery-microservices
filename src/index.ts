@@ -1,22 +1,21 @@
 import 'dotenv/config';
 import express, {Express} from 'express';
-import {adminRoute, vendorRoute} from './routes/index'
-import {dbConnect} from './config/index'
-import path from 'path';
-
-const app: Express = express();
+import {expressApp, dbConnect} from './services/index';
 
 
-dbConnect()
+const startServer = async () => {
+  const app: Express = express();
 
-app.use(express.json());
-app.use('/images', express.static(path.join(__dirname, 'images')))
+  await dbConnect();
 
-app.use('/admin', adminRoute);
-app.use('/vendor', vendorRoute);
+  await expressApp(app);
 
+  const PORT = process.env.PORT || 8080;
 
-const PORT = process.env.PORT 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+
+}
+
+startServer();
