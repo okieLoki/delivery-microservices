@@ -6,6 +6,7 @@ import path from 'path';
 
 const app: Express = express();
 
+
 dbConnect()
 
 app.use(express.json());
