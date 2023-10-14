@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { vendorLoginInputs, vendorEditInputs, createFoodInput } from '../interface/index'
+import { vendorLoginInputs, vendorEditInputs, createFoodInput } from '../dto/index'
 import { findVendor } from './index'
 import { validatePassword, handleErrors, generateToken } from '../utils/index'
 import { Food } from '../models/index'

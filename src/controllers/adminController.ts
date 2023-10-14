@@ -1,6 +1,6 @@
 import createError from 'http-errors';
 import { Request, Response } from 'express';
-import { createVendorInput } from '../interface/index';
+import { createVendorInput } from '../dto/index';
 import { Vendor } from '../models/index';
 import { generatePassword, generateSalt, handleErrors } from '../utils/index';
 

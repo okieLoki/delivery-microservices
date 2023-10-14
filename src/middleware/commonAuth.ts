@@ -1,4 +1,4 @@
-import { authPayload } from "../interface";
+import { authPayload } from "../dto";
 import { Request, Response, NextFunction } from "express";
 import { validateToken } from '../utils/index'
 

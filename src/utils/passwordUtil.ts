@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import bcrypt from 'bcryptjs'
-import { vendorPayload, authPayload } from '../interface/index'
+import { vendorPayload, authPayload } from '../dto/index'
 import jwt from 'jsonwebtoken'
 
 const generateSalt = async () => {
