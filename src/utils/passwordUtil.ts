@@ -15,7 +15,7 @@ const validatePassword = async (password: string, salt: string, hashedPassword: 
     return await generatePassword(password, salt) === hashedPassword
 }
 
-const generateToken = (payload: vendorPayload) => {
+const generateToken = (payload: authPayload) => {
     return jwt.sign(
         payload,
         process.env.JWT_SECRET as string,
