@@ -2,7 +2,8 @@ import express, { Express } from 'express';
 import {
     adminRoute,
     vendorRoute,
-    shoppingRoute
+    shoppingRoute,
+    customerRoute
 } from '../routes/index'
 import path from 'path';
 
@@ -14,7 +15,9 @@ const expressApp = async (app: Express) => {
 
     app.use('/admin', adminRoute);
     app.use('/vendor', vendorRoute);
-    app.use('/food', shoppingRoute);
+    app.use('/customer', customerRoute)
+    app.use(shoppingRoute);
+
 
     return app
 }
