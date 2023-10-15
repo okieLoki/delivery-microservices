@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { validate } from "class-validator";
 import { plainToClass } from 'class-transformer'
-import { createCustomerInputs } from '../dto'
+import {
+    createCustomerInputs,
+    userInputLogin
+} from '../dto'
 import createError from 'http-errors'
 import {
     generatePassword,
@@ -9,7 +12,8 @@ import {
     handleErrors,
     generateOtp,
     onRequestOTP,
-    generateToken
+    generateToken,
+    validatePassword
 } from "../utils";
 import { Customer } from '../models'
 
@@ -28,8 +32,8 @@ const customerSignup = async (req: Request, res: Response) => {
 
         const newCustomer = req.body
 
-        const existingCustomer = await Customer.findOne({email: newCustomer.email})
-        if(existingCustomer) throw createError.Conflict(`${newCustomer.email} is already registered`)
+        const existingCustomer = await Customer.findOne({ email: newCustomer.email })
+        if (existingCustomer) throw createError.Conflict(`${newCustomer.email} is already registered`)
 
         const salt = await generateSalt()
         const customerPassword = await generatePassword(newCustomer.password, salt)
@@ -70,6 +74,46 @@ const customerSignup = async (req: Request, res: Response) => {
 
 const customerLogin = async (req: Request, res: Response) => {
 
+    try {
+        const customerInput = plainToClass(userInputLogin, req.body)
+        const errors = await validate(customerInput)
+
+        if (errors.length > 0) {
+            throw createError(400, {
+                message: 'Validation Error',
+                errors: errors
+            })
+        }
+
+        const customer = await Customer.findOne({ email: customerInput.email })
+
+        if (customer) {
+            const validation = await validatePassword(customerInput.password, customer.password, customer.salt)
+
+            if (validation) {
+                const token = generateToken({
+                    _id: customer._id,
+                    email: customer.email,
+                    verified: customer.verified
+                })
+
+                return res.status(200).json({
+                    email: customer.email,
+                    token: token,
+                    verified: customer.verified
+                })
+            }
+            else {
+                throw createError.Unauthorized('Invalid Credentials')
+            }
+        }
+        else{
+            throw createError.NotFound('User not found')
+        }
+
+    } catch (error) {
+        handleErrors(error, res)
+    }
 }
 
 const customerVerify = async (req: Request, res: Response) => {
@@ -81,14 +125,14 @@ const requestOTP = async (req: Request, res: Response) => {
     const otp = req.body.otp
     const user = req.user
     try {
-    
-        if(!otp) throw createError.BadRequest('OTP is required')
-        if(!user) throw createError.Forbidden()
+
+        if (!otp) throw createError.BadRequest('OTP is required')
+        if (!user) throw createError.Forbidden()
 
         const profile = await Customer.findById(user._id)
 
-        if(profile){
-            if(profile.otp === parseInt(otp) && new Date() <= profile.otp_expiry){
+        if (profile) {
+            if (profile.otp === parseInt(otp) && new Date() <= profile.otp_expiry) {
                 profile.verified = true
                 await profile.save()
 
@@ -104,7 +148,7 @@ const requestOTP = async (req: Request, res: Response) => {
                     verified: profile.verified
                 })
             }
-            else{
+            else {
                 throw createError.BadRequest('OTP is incorrect')
             }
         }
