@@ -16,7 +16,6 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
     if (validate) {
         next()
     }
-
 }
 
 export {authenticate}
