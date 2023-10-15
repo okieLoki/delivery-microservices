@@ -88,12 +88,20 @@ const requestOTP = async (req: Request, res: Response) => {
         const profile = await Customer.findById(user._id)
 
         if(profile){
-            if(profile.otp === otp){
+            if(profile.otp === parseInt(otp) && new Date() <= profile.otp_expiry){
                 profile.verified = true
                 await profile.save()
 
+                const token = await generateToken({
+                    _id: profile._id,
+                    email: profile.email,
+                    verified: profile.verified
+                })
+
                 return res.status(200).json({
-                    message: 'OTP verified successfully'
+                    email: profile.email,
+                    token: token,
+                    verified: profile.verified
                 })
             }
             else{
