@@ -15,7 +15,8 @@ interface ICustomer extends Document {
     address?: string;
     phone: string;
     verified: boolean;
-    otp: number;
+    otpPhone: number;
+    otpEmail: number;
     otp_expiry: Date;
     lat?: number;
     lng?: number;
@@ -30,7 +31,8 @@ const CustomerSchema: Schema = new Schema({
     address: { type: String },
     phone: { type: String, required: true },
     verified: { type: Boolean, default: false },
-    otp: { type: Number, required: true },
+    otpPhone: { type: Number, required: true },
+    otpEmail: { type: Number, required: true },
     otp_expiry: { type: Date, required: true },
     lat: { type: Number, default: 0 },
     lng: { type: Number, default: 0 },

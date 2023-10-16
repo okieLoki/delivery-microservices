@@ -38,22 +38,23 @@ const customerSignup = async (req: Request, res: Response) => {
         const salt = await generateSalt()
         const customerPassword = await generatePassword(newCustomer.password, salt)
 
-        const { otp, expiry } = await generateOtp()
+        const { otpPhone, otpEmail, expiry } = await generateOtp()
 
         const result = await Customer.create({
             ...newCustomer,
             password: customerPassword,
             salt,
-            otp,
+            otpPhone,
+            otpEmail,
             otp_expiry: expiry
         })
 
         if (result) {
             await onRequestOTP(
-                otp,
+                otpPhone,
+                otpEmail,
                 newCustomer.phone,
-                newCustomer.email,
-                newCustomer.otpVerificationMethod
+                newCustomer.email
             )
 
             const token = await generateToken({
@@ -112,7 +113,7 @@ const customerLogin = async (req: Request, res: Response) => {
                 throw createError.Unauthorized('Invalid Credentials')
             }
         }
-        else{
+        else {
             throw createError.NotFound('User not found')
         }
 
@@ -123,21 +124,17 @@ const customerLogin = async (req: Request, res: Response) => {
 
 const customerVerify = async (req: Request, res: Response) => {
 
-}
-
-const requestOTP = async (req: Request, res: Response) => {
-
-    const otp = req.body.otp
+    const {otpPhone, otpEmail} = req.body
     const user = req.user
     try {
 
-        if (!otp) throw createError.BadRequest('OTP is required')
+        if (!otpEmail || !otpEmail) throw createError.BadRequest('OTP is required')
         if (!user) throw createError.Forbidden()
 
         const profile = await Customer.findById(user._id)
 
         if (profile) {
-            if (profile.otp === parseInt(otp) && new Date() <= profile.otp_expiry) {
+            if (profile.otpPhone === parseInt(otpPhone) && profile.otpEmail === parseInt(otpEmail) && new Date() <= profile.otp_expiry) {
                 profile.verified = true
                 await profile.save()
 
@@ -161,6 +158,12 @@ const requestOTP = async (req: Request, res: Response) => {
     } catch (error) {
         handleErrors(error, res)
     }
+
+}
+
+const requestOTP = async (req: Request, res: Response) => {
+
+
 }
 
 const getCustomerProfile = async (req: Request, res: Response) => {

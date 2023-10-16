@@ -1,29 +1,8 @@
 import {
     IsEmail,
     Length,
-    ValidationOptions,
-    ValidationArguments,
-    registerDecorator
 } from 'class-validator'
 
-const IsOtpVerificationMethod = (validationOptions?: ValidationOptions) => {
-    return function (object: Object, propertyName: string) {
-        registerDecorator({
-            name: 'isOtpVerificationMethod',
-            target: object.constructor,
-            propertyName: propertyName,
-            options: validationOptions,
-            validator: {
-                validate(value: any, args: ValidationArguments) {
-                    return value === 'sms' || value === 'email';
-                },
-                defaultMessage: (args: ValidationArguments) => {
-                    return `${args.property} must be 'sms' or 'email'`;
-                },
-            },
-        });
-    };
-  };
 
 export class createCustomerInputs {
 
@@ -36,8 +15,6 @@ export class createCustomerInputs {
     @Length(6, 12)
     password: string;
 
-    @IsOtpVerificationMethod()
-    otpVerificationMethod: string;
 }
 
 export class userInputLogin {
