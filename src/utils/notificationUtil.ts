@@ -1,3 +1,7 @@
+import { Resend } from "resend"
+import { otpEmailTemplate } from "../templates/otpEmailTemplate"
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const generateOtp = () => {
     const otp = Math.floor(10000 + Math.random() * 900000)
@@ -7,9 +11,8 @@ const generateOtp = () => {
     return { otp, expiry }
 }
 
-const onRequestOTP = (otp, toPhoneNo) => {
+const sendSMS = (otp, toPhoneNo) => {
     try {
-        
         const accontsid = process.env.TWILIO_ACCOUNT_SID
         const authToken = process.env.TWILIO_AUTH_TOKEN
         const client = require('twilio')(accontsid, authToken)
@@ -23,8 +26,40 @@ const onRequestOTP = (otp, toPhoneNo) => {
         return response
 
     } catch (error) {
+        console.error(error)
         return false
     }
+}
+
+const sendEmail = async (toEmail, otp) => {
+    try {
+
+        resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: toEmail,
+            subject: 'OTP for Food Delivery App',
+            html: otpEmailTemplate(otp)
+          });
+        
+    } catch (error) {
+        console.error(error)
+        return false
+    }
+}
+
+
+const onRequestOTP = (otp, toPhoneNo, toEmail, option) => {
+
+    if(option === 'sms'){
+        return sendSMS(otp, toPhoneNo)
+    }
+    else if(option === 'email'){
+        return sendEmail(toEmail, otp)
+    }
+    else{
+        return false
+    }
+
 }
 
 export {

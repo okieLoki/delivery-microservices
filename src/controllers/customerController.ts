@@ -49,7 +49,12 @@ const customerSignup = async (req: Request, res: Response) => {
         })
 
         if (result) {
-            await onRequestOTP(otp, newCustomer.phone)
+            await onRequestOTP(
+                otp,
+                newCustomer.phone,
+                newCustomer.email,
+                newCustomer.otpVerificationMethod
+            )
 
             const token = await generateToken({
                 _id: result._id,
