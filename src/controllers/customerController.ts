@@ -163,6 +163,39 @@ const customerVerify = async (req: Request, res: Response) => {
 
 const requestOTP = async (req: Request, res: Response) => {
 
+    const user = req.user
+    try {
+        if(!user) throw createError.Forbidden()
+
+        const profile = await Customer.findById(user._id)
+
+        if(profile) {
+            const { otpPhone, otpEmail, expiry } = await generateOtp()
+
+            profile.otpPhone = otpPhone
+            profile.otpEmail = otpEmail
+            profile.otp_expiry = expiry
+
+            await profile.save()
+
+            await onRequestOTP(
+                otpPhone,
+                otpEmail,
+                profile.phone,
+                profile.email
+            )
+
+            return res.status(200).json({
+                message: 'OTP sent successfully'
+            })
+        }
+        else {
+            throw createError.NotFound('User not found')
+        }
+
+    } catch (error) {
+        handleErrors(error, res)
+    }
 
 }
 

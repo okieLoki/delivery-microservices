@@ -54,6 +54,10 @@ const getVendorProfile = async (req: Request, res: Response) => {
         }
         const vendor = await findVendor(user._id)
 
+        if (!vendor) {
+            throw createError.NotFound('Vendor not found')
+        }
+
         return res.status(200).json({
             success: true,
             data: vendor
@@ -74,6 +78,8 @@ const updateVendorProfile = async (req: Request, res: Response) => {
         const dataToChange: vendorEditInputs = req.body;
 
         const vendor = await findVendor(user._id);
+
+        if(!vendor) throw createError.NotFound('Vendor not found')
 
         vendor.name = dataToChange.name || vendor.name;
         vendor.address = dataToChange.address || vendor.address;
@@ -111,6 +117,8 @@ const updateVendorService = async (req: Request, res: Response) => {
 
         const vendor = await findVendor(user._id);
 
+        if(!vendor) throw createError.NotFound('Vendor not found')
+
         vendor.serviceAvailable = serviceAvailable;
 
         const savedResult = await vendor.save();
@@ -127,15 +135,14 @@ const updateVendorService = async (req: Request, res: Response) => {
 }
 
 const updateVendorCoverImage = async (req: Request, res: Response) => {
-    try {
-        
-        const user = req.user
 
-        if(!user){
-            throw createError.Forbidden('Unauthorized')
-        }
+    const user = req.user
+    try {
+        if (!user) throw createError.Forbidden('Unauthorized')
 
         const vendor = await findVendor(user._id)
+
+        if (!vendor) throw createError.NotFound('Vendor not found')
 
         const files = req.files as [Express.Multer.File]
 
@@ -144,14 +151,14 @@ const updateVendorCoverImage = async (req: Request, res: Response) => {
         })
 
         vendor.coverImage.push(...images);
-      
+
         const savedResult = await vendor.save();
 
         return res.status(200).json({
             status: true,
             message: "Vendor cover image updated successfully",
             data: savedResult,
-        });        
+        });
 
     } catch (error) {
         handleErrors(error, res)
@@ -159,15 +166,16 @@ const updateVendorCoverImage = async (req: Request, res: Response) => {
 }
 
 const addFood = async (req: Request, res: Response) => {
-    try {
-        const user = req.user;
-        const food: createFoodInput = req.body;
 
-        if (!user) {
-            throw createError.Forbidden('Unauthorized')
-        }
+    const user = req.user;
+    const food: createFoodInput = req.body;
+
+    try {
+        if (!user) throw createError.Forbidden('Unauthorized')
 
         const vendor = await findVendor(user._id);
+
+        if (!vendor) throw createError.NotFound('Vendor not found')
 
         const files = req.files as [Express.Multer.File]
 
@@ -196,14 +204,14 @@ const addFood = async (req: Request, res: Response) => {
 }
 
 const getFoods = async (req: Request, res: Response) => {
-    try {
-        const user = req.user;
+    const user = req.user;
 
-        if (!user) {
-            throw createError.Forbidden('Unauthorized')
-        }
+    try {
+        if (!user) throw createError.Forbidden('Unauthorized')
 
         const vendor = await findVendor(user._id);
+        if (!vendor) throw createError.NotFound('Vendor not found')
+
         const foods = await Food.find({ vendorId: vendor._id })
 
         return res.status(200).json({
